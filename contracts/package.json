@@ -1,0 +1,27 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat build",
+    "test": "hardhat test",
+    "node": "hardhat node",
+    "export-abi": "node scripts/export-abi.mjs CertiChain ../web/lib",
+    "deploy:local": "hardhat ignition deploy ignition/modules/CertiChain.ts --network localhost --parameters ignition/parameters.json",
+    "deploy:local:reset": "rm -rf ignition/deployments/chain-31337 && npm run deploy:local",
+    "deploy:sepolia": "hardhat ignition deploy ignition/modules/CertiChain.ts --network sepolia --parameters ignition/parameters.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.1.9",
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
+    "@types/node": "^26.6.6",
+    "hardhat": "^3.21.2",
+    "typescript": "^7.0.2",
+    "viem": "^2.57.18"
+  }
+}
