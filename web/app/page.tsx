@@ -23,14 +23,17 @@ export default function HomePage() {
 
         <div className="home-hero-visual" aria-hidden="true">
           <div className="hero-cert">
-            <div className="hero-cert-ribbon">On-chain sealed</div>
+            <div className="hero-cert-top">
+              <div className="hero-cert-ribbon">On-chain sealed</div>
+              <span className="hero-cert-badge">✓ VALID</span>
+            </div>
             <p className="hero-cert-label">Certificate of Completion</p>
             <p className="hero-cert-name">Ada Lovelace</p>
             <p className="hero-cert-course">Computer Science</p>
             <div className="hero-cert-footer">
               <span>CERT-2026-001</span>
               <span className="hero-cert-dot" />
-              <span>VALID</span>
+              <span>Hash Verified</span>
             </div>
           </div>
         </div>
@@ -70,16 +73,20 @@ export default function HomePage() {
         <h2 id="logic-heading">What each result means</h2>
         <ul className="logic-list">
           <li>
-            <strong>VALID</strong> — the certificate was issued and is still active.
+            <span className="logic-pill logic-pill-valid">✓ VALID</span> — the certificate was
+            issued and is still active.
           </li>
           <li>
-            <strong>INVALID</strong> — no match was found, or the details do not match.
+            <span className="logic-pill logic-pill-invalid">✕ INVALID</span> — no match was found,
+            or the details do not match.
           </li>
           <li>
-            <strong>REVOKED</strong> — the certificate was cancelled by the issuer.
+            <span className="logic-pill logic-pill-revoked">! REVOKED</span> — the certificate was
+            cancelled by the issuer.
           </li>
           <li>
-            <strong>Privacy</strong> — student names are never stored on-chain, only hashes.
+            <span className="logic-pill logic-pill-privacy">PRIVACY</span> — student names are
+            never stored on-chain, only hashes.
           </li>
         </ul>
       </section>

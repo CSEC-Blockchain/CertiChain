@@ -15,7 +15,6 @@ import {
 } from "@/lib/contract";
 import { explainError } from "@/lib/errors";
 import { buildVerifyPath, hashCertificateData, hashCertificateId } from "@/lib/hash";
-import { rasterizeSvgElementToPng } from "@/lib/qr";
 import { useIssuerGuard } from "@/lib/use-issuer-guard";
 
 type SharePayload = {
@@ -43,8 +42,6 @@ export function IssueForm() {
   const [certId, setCertId] = useState("");
   const [issueDate, setIssueDate] = useState("");
   const [share, setShare] = useState<SharePayload | null>(null);
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
-  const qrContainerRef = useRef<HTMLDivElement | null>(null);
   const prevWalletRef = useRef(`${address ?? ""}:${chainId ?? ""}`);
 
   const certIdHash = useMemo(() => (certId.trim() ? hashCertificateId(certId) : undefined), [certId]);
@@ -143,37 +140,9 @@ export function IssueForm() {
     });
   }
 
-  async function handleCopyLink() {
-    if (!issuedLink) return;
-    try {
-      await navigator.clipboard.writeText(issuedLink);
-      setCopyStatus("copied");
-      setTimeout(() => setCopyStatus("idle"), 2000);
-    } catch {
-      setCopyStatus("failed");
-    }
-  }
-
-  async function handleDownloadQr() {
-    const svg = qrContainerRef.current?.querySelector("svg");
-    if (!svg || !share) return;
-
-    try {
-      const pngUrl = await rasterizeSvgElementToPng(svg, { qrSize: 320, padding: 32 });
-      const link = document.createElement("a");
-      link.download = `certichain-${share.certId.replace(/[^a-zA-Z0-9_-]/g, "_")}.png`;
-      link.href = pngUrl;
-      link.click();
-    } catch {
-      // Fall back to opening the verify link if rasterization fails in older browsers.
-      if (issuedLink) window.open(issuedLink, "_blank", "noopener,noreferrer");
-    }
-  }
-
   function handleReset() {
     write.reset();
     setShare(null);
-    setCopyStatus("idle");
     setStudentName("");
     setCourse("");
     setCertId("");
@@ -313,7 +282,7 @@ export function IssueForm() {
             <div>
               <p className="status-ok">Certificate issued successfully</p>
               <p className="panel-note">
-                Share the link or download the QR code below.
+                Share the verification link or download the QR code below.
               </p>
             </div>
             <button type="button" className="btn-ghost btn-sm" onClick={handleReset}>
@@ -328,54 +297,45 @@ export function IssueForm() {
             issueDate={share.issueDate}
             status="issued"
             verifyUrl={issuedLink}
-            qrRef={qrContainerRef}
+            proofHash={hashCertificateData(
+              share.studentName,
+              share.course,
+              share.certId,
+              share.issueDate,
+            )}
+            showShareActions
             actions={
-              <>
-                <button type="button" className="btn-primary btn-sm" onClick={handleCopyLink}>
-                  {copyStatus === "copied" ? "Copied!" : "Copy verify link"}
-                </button>
-                <button
-                  type="button"
-                  className="btn-ghost btn-sm"
-                  onClick={() => void handleDownloadQr()}
-                >
-                  Download QR
-                </button>
-                {shareQuery && (
-                  <Link href={shareQuery} className="btn-ghost btn-sm">
-                    Open Verify
-                  </Link>
-                )}
-                <button type="button" className="btn-ghost btn-sm" onClick={() => window.print()}>
-                  Print certificate
-                </button>
-              </>
+              shareQuery ? (
+                <Link href={shareQuery} className="btn-ghost btn-sm">
+                  Open Verify
+                </Link>
+              ) : null
             }
           />
 
-          {copyStatus === "failed" && (
-            <p className="panel-note text-xs">
-              Clipboard permission blocked. Copy the verification link below manually.
-            </p>
-          )}
-          <p className="share-url break-all">{issuedLink}</p>
-          {write.data && (
-            <p className="panel-note text-xs">
-              Tx:{" "}
-              {explorerUrl ? (
-                <a
-                  href={explorerUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline hover:text-[var(--teal)]"
-                >
-                  <code>{formatAddress(write.data)}</code>
-                </a>
-              ) : (
-                <code className="break-all">{formatAddress(write.data)}</code>
-              )}
-            </p>
-          )}
+          <div className="share-meta no-print">
+            <div className="share-meta-row">
+              <span className="share-meta-label">Shareable verify link</span>
+              <p className="share-url break-all">{issuedLink}</p>
+            </div>
+            {write.data && (
+              <p className="share-meta-tx">
+                <span>Tx:</span>{" "}
+                {explorerUrl ? (
+                  <a
+                    href={explorerUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline hover:text-[var(--teal)]"
+                  >
+                    <code>{formatAddress(write.data)}</code>
+                  </a>
+                ) : (
+                  <code className="break-all">{formatAddress(write.data)}</code>
+                )}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </section>

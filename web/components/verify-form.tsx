@@ -241,23 +241,25 @@ function VerifyFormInner({
       {query && (
         <div className="verify-result" role="status">
           {isFetching ? (
-            <p className="panel-note">Checking {targetChain.name} blockchain…</p>
+            <p className="verify-loading">
+              <span className="verify-loading-dot" aria-hidden="true" />
+              <span>Checking {targetChain.name} blockchain…</span>
+            </p>
           ) : isError ? (
             <p className="status-error">
-              Could not reach the contract on {targetChain.name}. Check that your node is running
-              and NEXT_PUBLIC_CONTRACT_ADDRESS is configured.
+              Could not reach the contract on {targetChain.name}. For Sepolia, set a real deployed
+              address in NEXT_PUBLIC_CONTRACT_ADDRESS (not the Hardhat local 0x5FbD… address) and a
+              full HTTPS RPC URL in NEXT_PUBLIC_SEPOLIA_RPC_URL, then redeploy the web app.
             </p>
-          ) : query.dataHash &&
-            (status === Status.Valid || status === Status.Revoked || status === Status.Invalid) ? (
+          ) : query.dataHash && status === Status.Valid ? (
             <CertificateDocument
               studentName={query.studentName}
               course={query.course}
               certId={query.certId}
               issueDate={query.issueDate}
-              status={
-                status === Status.Valid ? "valid" : status === Status.Revoked ? "revoked" : "invalid"
-              }
+              status="valid"
               recordedAt={recordExists ? formatIssuedTimestamp(recordIssuedAt) : undefined}
+              proofHash={recordExists && recordDataHash ? recordDataHash : undefined}
               verifyUrl={
                 mounted
                   ? buildVerifyUrl(window.location.origin, {
@@ -273,21 +275,7 @@ function VerifyFormInner({
                       issueDate: query.issueDate,
                     })
               }
-              actions={
-                status === Status.Valid ? (
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => window.print()}>
-                    Print certificate
-                  </button>
-                ) : (
-                  <p className="panel-note">
-                    {status === Status.Revoked
-                      ? "This certificate was cancelled by the issuer."
-                      : hashMismatch
-                        ? "This ID exists, but the name, course, or date does not match."
-                        : "No matching certificate was found."}
-                  </p>
-                )
-              }
+              showShareActions
             />
           ) : (
             <div
