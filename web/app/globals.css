@@ -1649,3 +1649,81 @@ a {
   line-height: 1.45;
   color: var(--muted);
 }
+
+/* ============ Responsive enhancements ============ */
+html { -webkit-text-size-adjust: 100%; }
+
+body { padding-bottom: env(safe-area-inset-bottom); }
+
+.cert-doc-seal-svg {
+  width: 3.4rem;
+  height: 3.4rem;
+}
+
+@media (max-width: 860px) {
+  .site-shell { padding-inline: 0.25rem; }
+  .home-hero-stage { min-height: auto; }
+}
+
+@media (max-width: 720px) {
+  .cert-doc-frame {
+    padding: 1.15rem 0.95rem;
+    gap: 0.5rem;
+  }
+  .cert-doc-corner {
+    width: 1.7rem;
+    height: 1.7rem;
+    top: 0.45rem;
+  }
+  .cert-doc-corner-tl { left: 0.45rem; }
+  .cert-doc-corner-tr { right: 0.45rem; }
+  .cert-doc-corner-bl { left: 0.45rem; bottom: 0.45rem; }
+  .cert-doc-corner-br { right: 0.45rem; bottom: 0.45rem; }
+  .cert-doc-title {
+    font-size: 1.12rem;
+    white-space: normal;
+  }
+  .cert-doc-name {
+    font-size: 1.55rem;
+  }
+  .cert-doc-seal-svg {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .cert-doc-org { font-size: 0.64rem; }
+  .cert-doc-org-sub { font-size: 0.56rem; }
+  .cert-doc-proof { font-size: 0.66rem; }
+}
+
+@media (max-width: 560px) {
+  .site-header { margin-bottom: 1.25rem; padding-bottom: 0.8rem; }
+  .brand-mark { font-size: 1.08rem; gap: 0.45rem; }
+  .brand-sub { font-size: 0.5rem; letter-spacing: 0.28em; }
+  .nav-link { font-size: 0.85rem; padding: 0.32rem 0.6rem; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 1rem;
+    padding: 0.72rem 0.85rem;
+  }
+
+  .cta-row {
+    width: 100%;
+  }
+  .cta-row .btn-primary,
+  .cta-row .btn-ghost {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .page-head h1 { font-size: 1.55rem; }
+
+  .verify-submit-btn { width: 100%; }
+
+  .trust-item { padding: 0.75rem 0.85rem; }
+  .simple-step { padding: 0.95rem 1rem; }
+  .panel-note { font-size: 0.85rem; }
+
+  .footer-bottom { flex-direction: column; gap: 0.3rem; }
+}
