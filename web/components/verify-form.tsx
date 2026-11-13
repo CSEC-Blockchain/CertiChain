@@ -8,6 +8,8 @@ import { QrScanner } from "@/components/qr-scanner";
 import {
   certiChain,
   contractAddress,
+  formatAddress,
+  getExplorerAddressUrl,
   statusLabel,
   Status,
   targetChain,
@@ -182,6 +184,7 @@ function VerifyFormInner({
   const status = active.data as CertificateStatus | undefined;
   const label = statusLabel(status);
 
+  const contractExplorer = getExplorerAddressUrl();
   const record = recordRead.data;
   const recordDataHash = record?.[0];
   const recordIssuedAt = record?.[1];
@@ -247,9 +250,8 @@ function VerifyFormInner({
             </p>
           ) : isError ? (
             <p className="status-error">
-              Could not reach the contract on {targetChain.name}. For Sepolia, set a real deployed
-              address in NEXT_PUBLIC_CONTRACT_ADDRESS (not the Hardhat local 0x5FbD… address) and a
-              full HTTPS RPC URL in NEXT_PUBLIC_SEPOLIA_RPC_URL, then redeploy the web app.
+              Could not reach the CertiChain contract on {targetChain.name}. Check the network
+              connection and RPC configuration, then try again.
             </p>
           ) : query.dataHash && status === Status.Valid ? (
             <CertificateDocument
@@ -348,6 +350,30 @@ function VerifyFormInner({
               )}
             </div>
           )}
+
+          <dl className="detail-list result-chain">
+            <div>
+              <dt>Network</dt>
+              <dd>{targetChain.name} · Chain ID {targetChain.id}</dd>
+            </div>
+            <div>
+              <dt>Smart contract</dt>
+              <dd>
+                {contractExplorer ? (
+                  <a
+                    className="explorer-link"
+                    href={contractExplorer}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {formatAddress(contractAddress)} · View on Etherscan
+                  </a>
+                ) : (
+                  formatAddress(contractAddress)
+                )}
+              </dd>
+            </div>
+          </dl>
         </div>
       )}
 

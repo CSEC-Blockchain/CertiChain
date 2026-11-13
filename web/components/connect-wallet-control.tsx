@@ -87,13 +87,52 @@ export function ConnectWalletControl({
   }
 
   const connectError = connect.error;
+  const noWallets = mounted && available.length === 0;
   const noProvider =
-    missingProvider || Boolean(connectError && /no provider|not found/i.test(connectError.message));
+    noWallets ||
+    missingProvider ||
+    Boolean(connectError && /no provider|not found/i.test(connectError.message));
   const errorText = noProvider
-    ? "No browser wallet found. Install MetaMask or another EVM wallet."
+    ? null
     : connectError
       ? explainError(connectError, "connect")
       : null;
+
+  if (noWallets) {
+    return (
+      <div
+        ref={wrapRef}
+        className={`wallet-connect-wrap wallet-install ${align === "right" ? "wallet-connect-right" : ""}`}
+      >
+        <p className="wallet-install-note">
+          No wallet detected on this device. Install a browser wallet to issue or revoke
+          certificates.
+        </p>
+        <div className="wallet-install-actions">
+          <a
+            className="btn-primary btn-sm"
+            href="https://metamask.io/download/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Download MetaMask
+          </a>
+          <a
+            className="inline-link-btn"
+            href="https://support.metamask.io/hc/en-us/articles/360015289712-Install-MetaMask"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Setup guide ↗
+          </a>
+        </div>
+        <p className="wallet-install-hint">
+          Works with MetaMask and any EIP-6963 browser wallet — on desktop and mobile. Verification
+          (Verify page) never requires a wallet.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div

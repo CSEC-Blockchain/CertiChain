@@ -38,3 +38,9 @@ export function getExplorerTxUrl(hash: `0x${string}` | undefined) {
   if (!baseUrl || !hash) return undefined;
   return `${baseUrl}/tx/${hash}`;
 }
+
+export function getExplorerAddressUrl() {
+  const baseUrl = targetChain.blockExplorers?.default.url;
+  if (!baseUrl || !contractAddress) return undefined;
+  return `${baseUrl}/address/${contractAddress}`;
+}

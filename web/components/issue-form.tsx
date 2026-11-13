@@ -326,7 +326,7 @@ export function IssueForm() {
                     rel="noreferrer"
                     className="underline hover:text-[var(--teal)]"
                   >
-                    <code>{formatAddress(write.data)}</code>
+                    <code>{formatAddress(write.data)}</code> · Etherscan ↗
                   </a>
                 ) : (
                   <code className="break-all">{formatAddress(write.data)}</code>

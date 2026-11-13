@@ -25,3 +25,6 @@ artifacts/
 cache/
 coverage/
 *.tsbuildinfo
+
+# Ignition deployment journals (machine-specific)
+contracts/ignition/deployments/
