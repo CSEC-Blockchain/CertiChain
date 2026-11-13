@@ -4,4 +4,8 @@ cache
 coverage
 types
 .env
+.env.*
+!.env.example
+*.pem
+*.key
 ignition/deployments/chain-31337

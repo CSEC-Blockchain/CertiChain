@@ -1,0 +1,27 @@
+# Secrets and environment files — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Dependencies and build output (sub-projects carry their own .gitignore)
+node_modules/
+.next/
+out/
+artifacts/
+cache/
+coverage/
+*.tsbuildinfo

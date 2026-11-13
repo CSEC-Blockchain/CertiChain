@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CertiChain Web
 
-## Getting Started
+Next.js 16 (App Router) frontend for the CertiChain dApp — issue, verify, and revoke blockchain-anchored certificates.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** + React 19, App Router, Server Components, Turbopack
+- **Tailwind CSS 4**
+- **wagmi v3** + **viem v2** + `@tanstack/react-query` — chain reads/writes and multi-wallet (EIP-6963) connection via `injected()`
+- **qrcode.react** (generation) and **jsqr** (camera/upload scanning)
+
+## Pages
+
+| Route | Description |
+|---|---|
+| `/` | Landing page and product overview |
+| `/issue` | Issue a certificate (owner wallet only); also hosts revoke and QR/download output |
+| `/verify` | Public verification — ID input, link paste, or QR scan; no wallet required |
+
+## Setup
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in values — never commit .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_CHAIN_ID` | `31337` (Hardhat Local) or `11155111` (Sepolia) |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | Deployed CertiChain contract address |
+| `NEXT_PUBLIC_SEPOLIA_RPC_URL` | Full HTTPS RPC URL **or** a bare Alchemy key (`alch_…`), auto-expanded in `lib/wagmi.ts` |
 
-## Learn More
+`.env*` files are git-ignored except `.env.example`. Keep real values in `.env.local` only.
 
-To learn more about Next.js, take a look at the following resources:
+## How verification works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`lib/hash.ts` recomputes `certIdHash` and `dataHash` client-side:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+certIdHash = keccak256(utf8(certId))
+dataHash   = keccak256(utf8(`${studentName}|${course}|${certId}|${issueDate}`))
+```
 
-## Deploy on Vercel
+`lib/contract.ts` exposes the wagmi config, target chain, and contract reference. `lib/hash.ts` also parses plain IDs and full verification URLs (`parseVerificationInput`), used by `/verify`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Script | Description |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` | Production build |
+| `npm start` | Serve production build |
+| `npm run lint` | ESLint |
+| `npm test` | Unit tests for `lib/hash.ts` |
+
+## Notes
+
+- `next.config.ts` and `next-env.d.ts` are managed by Next.js — don't hand-edit.
+- See `../README.md` for the full local-chain ↔ frontend workflow and Sepolia deployment.
+- Sepolia RPC handling accepts a full URL or a bare Alchemy key; passing a partial URL was a previous production bug and now falls back safely.
