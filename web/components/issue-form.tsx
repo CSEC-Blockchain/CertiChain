@@ -104,7 +104,6 @@ export function IssueForm() {
     if (receipt.isSuccess || write.error || receipt.error) {
       write.reset();
       setShare(null);
-      setCopyStatus("idle");
     }
   }
 
@@ -127,7 +126,6 @@ export function IssueForm() {
       issueDate: issueDate.trim(),
     };
     setShare(payload);
-    setCopyStatus("idle");
     write.reset();
     write.mutate({
       ...certiChain,
